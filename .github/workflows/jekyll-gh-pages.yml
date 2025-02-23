@@ -18,14 +18,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       # Jekyll Build
-      - name: Build with Jekyll
+      - name: Build Jekyll Site
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./
@@ -35,18 +35,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: '22' # Ensure this matches your React project requirement
+
       - name: Install React dependencies
         run: npm install
-      - name: Build React
+        working-directory: ./ # Change this if your React project is inside a subdirectory
+
+      - name: Build React App
         run: npm run build
+        working-directory: ./ # Adjust if needed
 
-      # Move React build output into Jekyll _site directory
-      - name: Move React Build into Jekyll Site
+      # Debugging step to check if build exists
+      - name: Check React Build Directory
+        run: ls -la ./build || echo "React build directory missing!"
+
+      # Move React Build inside Jekyll _site
+      - name: Merge React into Jekyll Site
         run: |
-          mv ./build ./_site/react
+          mkdir -p ./_site/react
+          mv ./build/* ./_site/react/
+        if: success() # Only runs if the build was successful
 
-      - name: Upload merged artifact
+      - name: Upload Combined Artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./_site
