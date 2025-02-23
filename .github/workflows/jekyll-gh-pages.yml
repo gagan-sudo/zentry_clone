@@ -1,4 +1,4 @@
-name: Deploy Jekyll and React to GitHub Pages
+name: Deploy Jekyll and Vite to GitHub Pages
 
 on:
   push:
@@ -31,30 +31,30 @@ jobs:
           source: ./
           destination: ./_site
 
-      # React Build
+      # Vite Build
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '22' # Ensure this matches your React project requirement
+          node-version: '22' # Ensure this matches your Vite project requirement
 
-      - name: Install React dependencies
+      - name: Install Vite dependencies
         run: npm install
-        working-directory: ./ # Change this if your React project is inside a subdirectory
+        working-directory: ./ # Change if your Vite project is in a subdirectory
 
-      - name: Build React App
+      - name: Build Vite App
         run: npm run build
         working-directory: ./ # Adjust if needed
 
-      # Debugging step to check if build exists
-      - name: Check React Build Directory
-        run: ls -la ./build || echo "React build directory missing!"
+      # Debugging step to check if dist exists
+      - name: Check Vite Build Directory
+        run: ls -la ./dist || echo "Vite build directory missing!"
 
-      # Move React Build inside Jekyll _site
-      - name: Merge React into Jekyll Site
+      # Move Vite Build inside Jekyll _site
+      - name: Merge Vite into Jekyll Site
         run: |
-          mkdir -p ./_site/react
-          mv ./build/* ./_site/react/
-        if: success() # Only runs if the build was successful
+          mkdir -p ./_site/vite
+          mv ./dist/* ./_site/vite/
+        if: success()
 
       - name: Upload Combined Artifact
         uses: actions/upload-pages-artifact@v3
